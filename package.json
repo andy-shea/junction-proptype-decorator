@@ -1,6 +1,6 @@
 {
   "name": "junction-proptype-decorator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Map your Junction entity schema to an output suitable for React prop validation",
   "main": "lib/index.js",
   "repository": {
