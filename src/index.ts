@@ -1,17 +1,26 @@
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 
-function mapType(type) {
-  if (type === 'string') return PropTypes.string;
-  if (type === 'integer' || type === 'int' || type === 'number') return PropTypes.number;
-  if (type === 'boolean' || type === 'bool') return PropTypes.bool;
+enum Type {
+  String = "string",
+  Integer = "integer",
+  Int = "int",
+  Number = "number",
+  Boolean = "boolean",
+  Bool = "bool"
 }
 
-function mapSchema(klass) {
-  if (!klass.schema) throw Error('Missing schema');
-  const {props, collections} = klass.schema;
+function mapType(type: Type): any {
+  if (type === Type.String) return PropTypes.string;
+  if (type === Type.Integer || type === Type.Int || type === Type.Number) return PropTypes.number;
+  if (type === Type.Boolean || type === Type.Bool) return PropTypes.bool;
+}
+
+function mapSchema(target: any) {
+  if (!target.schema) throw Error('Missing schema');
+  const {props, collections} = target.schema;
   let shape = {};
   if (props) {
-    Object.assign(shape, Object.keys(props).reduce((map, prop) => {
+    Object.assign(shape, Object.keys(props).reduce((map: any, prop) => {
       const {type} = props[prop];
       if (type) {
         const propType = type.schema ? PropTypes.object : mapType(type);
@@ -21,7 +30,7 @@ function mapSchema(klass) {
     }, {}));
   }
   if (collections) {
-    Object.assign(shape, Object.keys(collections).reduce((map, prop) => {
+    Object.assign(shape, Object.keys(collections).reduce((map: any, prop) => {
       const {element} = collections[prop];
       const propType = element.schema ? PropTypes.array : mapType(element);
       if (propType) {
@@ -34,8 +43,8 @@ function mapSchema(klass) {
   return PropTypes.shape(shape);
 }
 
-function proptypeable(target) {
-  let mappedShape;
+function proptypeable(target: any) {
+  let mappedShape: Object;
   Object.defineProperty(target, 'shape', {
     get: function shape() {
       if (!mappedShape) mappedShape = mapSchema(target);
